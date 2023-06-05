@@ -17,15 +17,20 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
-
         // bootstrap the client
-        ExternalTaskClient client = ExternalTaskClient.create()
+//        ExternalTaskClient client = ExternalTaskClient.create()
+//                .baseUrl("http://localhost:8080/engine-rest")
+//                .asyncResponseTimeout(1000)
+//                .build();
+
+        // bootstrap myClient
+        ExternalTaskClient myClient = new ExternalTaskClientWrapper()
                 .baseUrl("http://localhost:8080/engine-rest")
                 .asyncResponseTimeout(1000)
                 .build();
 
         // subscribe to the topic
-        client.subscribe("invoiceCreator")
+        myClient.subscribe("invoiceCreator")
                 .handler((externalTask, externalTaskService) -> {
 
                     // instantiate an invoice object
@@ -55,7 +60,7 @@ public class App
 
                 }).open();
 
-        client.subscribe("invoiceArchiver")
+        myClient.subscribe("invoiceArchiver")
                 .handler((externalTask, externalTaskService) -> {
                     TypedValue typedInvoice = externalTask.getVariableTyped("invoice");
                     Invoice invoice = (Invoice) typedInvoice.getValue();
